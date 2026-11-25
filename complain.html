@@ -1,0 +1,13 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="app.css"><link rel="stylesheet" href="assets/leaflet.css"><script src="assets/leaflet.js"></script><script src="app.js"></script></head><body><script>shell("Complain")</script>
+<main class="wrap page"><h1 style="font-size:2rem;margin-bottom:6px">Make a complaint</h1><p class="hint">Landlord did not show up, property not as listed, or someone asked for money? Tell us. We review every complaint and reply on WhatsApp.</p>
+<form class="f" id="f"><div><label for="r">Deal reference</label><input id="r" placeholder="NN-XXXXXX"></div>
+<div><label for="t">What went wrong?</label><select id="t"><option value="noshow">Landlord or contact person did not show up</option><option value="mismatch">Property is not what was listed</option><option value="needs">Property does not meet my needs</option><option value="money">Someone asked me for money</option><option value="other">Something else</option></select></div>
+<div><label for="d">Tell us what happened</label><textarea id="d" required></textarea></div>
+<div><label for="ph">Photos (optional)</label><input id="ph" type="file" accept="image/*" multiple></div>
+<button class="btn go" type="submit" id="b">Submit my complaint</button><div class="msg" id="m"></div></form></main>
+<script>$("r").value=q("ref")||"";if(q("type"))$("t").value=q("type");
+$("f").onsubmit=async e=>{e.preventDefault();const b=$("b"),m=$("m");b.disabled=true;b.textContent="Submitting…";m.className="msg";
+try{const u=await upload([...$("ph").files]),id=rid("CP"),T=$("t").options[$("t").selectedIndex].text,c=S.get("nn_complaints",[]);c.push({id,ref:$("r").value});S.set("nn_complaints",c);
+const t="Complaint "+id+"\nDeal ref: "+($("r").value||"-")+"\nProblem: "+T+"\nDetails: "+$("d").value.trim()+"\nPhotos: "+(u?u.join(" "):"I will attach them in this chat");
+m.style.display="block";m.innerHTML="<b>Complaint "+id+" recorded.</b> Send it to us now so we can act. If money was requested, we suspend the listing while we investigate.<p><a class='btn go' href='"+wa(t)+"'>Send my complaint on WhatsApp</a></p>";b.textContent="Complaint recorded"}
+catch(x){m.className="msg err";m.style.display="block";m.textContent="Photos could not upload. Remove them and try again, or attach them on WhatsApp.";b.disabled=false;b.textContent="Submit my complaint"}}</script></body></html>

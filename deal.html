@@ -1,0 +1,18 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="app.css"><link rel="stylesheet" href="assets/leaflet.css"><script src="assets/leaflet.js"></script><script src="app.js"></script></head><body><script>shell("My deal")</script>
+<main class="wrap page" id="m"></main>
+<script>
+const deals=S.get("nn_deals",{}),r=q("ref"),M=$("m"),STG=["Request sent","Landlord accepted","Booking fee paid and contact released","Inspection done"];
+if(!r){const k=Object.keys(deals);M.innerHTML="<h1 style='font-size:2rem'>My deals</h1>"+(k.length?k.map(x=>'<div class="panel"><b>'+esc(deals[x].title)+'</b><br>'+STG[deals[x].stage-1]+'<br><a class="btn alt sm" href="deal.html?ref='+x+'">Open</a></div>').join(""):'<p class="empty">No deals on this phone yet. <a href="index.html#listings">Find a property</a>.</p>')}
+else{const d=deals[r]||{ref:r,title:q("t")||"Your inspection",stage:1,name:"",phone:"",day:""},s=+q("s")||0;if(s>d.stage)d.stage=Math.min(s,4);
+const h=location.hash.match(/c=([^&]+)/);if(h){try{d.contact=decodeURIComponent(escape(atob(decodeURIComponent(h[1]))))}catch(e){}history.replaceState(null,"","deal.html?ref="+r)}
+deals[r]=d;S.set("nn_deals",deals);
+const st=d.stage,done=()=>{d.stage=4;S.set("nn_deals",deals);location.reload()};
+let a="";
+if(st===1)a='<p>Send this request so we can ask the landlord. We reply here once they accept.</p><a class="btn go" href="'+wa("Hi NaijaNest, inspection request "+r+" for "+d.title+". Name: "+d.name+". Phone: "+d.phone+". Preferred time: "+(d.day||"any")+".")+'">Send my request on WhatsApp</a>';
+else if(st===2)a='<p><b>The landlord accepted.</b> Pay the booking fee to NaijaNest to get the contact person. Do not pay anyone else.</p><a class="btn go" href="pay.html?ref='+r+'">Pay the '+N(CFG.VIEW_FEE)+' booking fee</a>';
+else if(st>=3){const c=(d.contact||"").split("|");a=c[1]?'<p><b>Contact person:</b> '+esc(c[0])+'</p><div class="row"><a class="btn go" href="https://wa.me/'+intl(c[1])+'?text='+encodeURIComponent("Hi, I booked an inspection through NaijaNest (ref "+r+"). Please confirm a time to view the property.")+'">Message on WhatsApp</a><a class="btn alt" href="tel:'+esc(c[1])+'">Call</a></div><p class="hint">They only show you the property. Never pay them or the landlord anything.</p>':'<p>Your fee is confirmed. Open the link we sent you on WhatsApp to unlock the contact.</p>'+(st===3?'':'');
+ if(st===3)a+='<p style="margin-top:14px"><button class="btn alt sm" id="dn">I have inspected the property</button></p>';else a+='<p><b>Inspection done.</b> Was it what you expected?</p><a class="btn alt sm" href="'+wa("Hi NaijaNest, my inspection (ref "+r+") went well. Next step: ")+'">Yes, tell NaijaNest what I decided</a>'}
+M.innerHTML='<h1 style="font-size:2rem;margin-bottom:6px">'+esc(d.title)+'</h1><p class="hint">Reference '+r+'</p><ol class="stages">'+STG.map((x,i)=>'<li class="'+(i+1<st?'done':i+1===st?'now':'')+'">'+(i+1<st?'Done: ':'')+x+'</li>').join("")+'</ol><div class="panel">'+a+'</div>'+
+'<div class="panel"><b>Something wrong?</b><div class="row" style="margin-top:10px"><a class="btn alt sm" href="complain.html?ref='+r+'&type=noshow">Landlord or contact person did not show up</a><a class="btn alt sm" href="complain.html?ref='+r+'&type=mismatch">Property is not what was listed</a><a class="btn alt sm" href="complain.html?ref='+r+'&type=money">Someone asked me for money</a></div></div>';
+if($("dn"))$("dn").onclick=done}
+</script></body></html>

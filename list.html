@@ -1,0 +1,23 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="app.css"><link rel="stylesheet" href="assets/leaflet.css"><script src="assets/leaflet.js"></script><script src="app.js"></script></head><body><script>shell("List a property")</script>
+<main class="wrap page"><h1 style="font-size:2rem;margin-bottom:6px">List your property</h1><p class="hint">Free to submit. The listing fee is <b id="fee"></b>, paid once after we verify you. No agents, ever.</p>
+<form class="f" id="f"><div class="two2"><div><label for="n">Your full name</label><input id="n" required></div><div><label for="p">Your phone</label><input id="p" type="tel" required></div></div>
+<div class="two2"><div><label for="t">Property type</label><select id="t"><option>Room</option><option selected>Flat</option><option>House</option></select></div><div><label for="s">State</label><select id="s"></select></div></div>
+<div class="two2"><div><label for="a">Area</label><input id="a" required></div><div><label for="y">Yearly rent (₦)</label><input id="y" inputmode="numeric" required></div></div>
+<div><label for="d">Describe the property</label><textarea id="d"></textarea></div>
+<div><label for="ph">Photos of the apartment</label><input id="ph" type="file" accept="image/*" multiple><p class="hint" id="phn"></p></div>
+<div class="two2"><div><label for="cn">Contact person's name</label><input id="cn" required></div><div><label for="cp">Contact person's phone</label><input id="cp" type="tel" required></div></div>
+<p class="hint">The contact person only opens the door. They never collect money or negotiate.</p>
+<div><label>Drop a pin (the area is enough)</label><div id="pm"></div><button class="btn alt sm" type="button" id="gps" style="margin-top:8px">Use my current location</button><p class="hint" id="pinmsg">Tap the map to place the pin.</p></div>
+<button class="btn go" type="submit" id="b">Submit my property</button><div class="msg" id="m"></div></form></main>
+<script>$("fee").textContent=N(CFG.LISTING_FEE);STATES.forEach(s=>$("s").add(new Option(s,s)));$("phn").textContent=CFG.CLOUD?"Up to 8 photos.":"Photo upload is not switched on yet. Attach your photos in the WhatsApp chat after you submit.";
+const pm=L.map("pm",{scrollWheelZoom:false}).setView([9.08,8.67],5);L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",{maxZoom:18,attribution:"© OpenStreetMap contributors © CARTO"}).addTo(pm);setTimeout(()=>pm.invalidateSize(),400);
+let pin=null,pc=null;const setPin=(a,o)=>{pc={a,o};pin?pin.setLatLng([a,o]):pin=L.marker([a,o]).addTo(pm);$("pinmsg").textContent="Pin placed. Tap again to move it."};
+pm.on("click",e=>setPin(e.latlng.lat,e.latlng.lng));
+$("gps").onclick=()=>navigator.geolocation?navigator.geolocation.getCurrentPosition(p=>{setPin(p.coords.latitude,p.coords.longitude);pm.setView([p.coords.latitude,p.coords.longitude],15)},()=>{$("pinmsg").textContent="Location is off. Tap the map instead."}):0;
+$("f").onsubmit=async e=>{e.preventDefault();const m=$("m"),b=$("b"),v=k=>$(k).value.trim(),ok=x=>/^\+?\d{10,14}$/.test(x.replace(/\s/g,""));m.className="msg err";m.style.display="none";
+if(!ok(v("p"))||!ok(v("cp"))||!(parseInt(v("y").replace(/\D/g,""))>0)){m.style.display="block";m.textContent="Check both phone numbers (10 to 14 digits) and the yearly rent. A contact person is required.";return}
+b.disabled=true;b.textContent="Uploading…";
+try{const u=await upload([...$("ph").files].slice(0,8));
+const t="New listing for verification\nOwner: "+v("n")+" ("+v("p")+")\nType: "+v("t")+"\nLocation: "+v("a")+", "+v("s")+"\nYearly rent: "+N(parseInt(v("y").replace(/\D/g,"")))+"\nDetails: "+(v("d")||"-")+"\nContact person: "+v("cn")+" ("+v("cp")+")\nMap pin: "+(pc?"https://maps.google.com/?q="+pc.a+","+pc.o:"not set")+"\nPhotos: "+(u?u.join(" "):"I will attach them in this chat");
+m.className="msg";m.style.display="block";m.innerHTML="<b>Almost done.</b> Send this to us so we can verify you. We reply on WhatsApp.<p><a class='btn go' href='"+wa(t)+"'>Send my property on WhatsApp</a></p>";b.textContent="Submitted"}
+catch(x){m.className="msg err";m.style.display="block";m.textContent="Photos could not upload. Remove them and try again, or attach them on WhatsApp.";b.disabled=false;b.textContent="Submit my property"}}</script></body></html>

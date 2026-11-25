@@ -1,0 +1,9 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="app.css"><link rel="stylesheet" href="assets/leaflet.css"><script src="assets/leaflet.js"></script><script src="app.js"></script></head><body><script>shell("Pay the booking fee")</script>
+<div class="alert">Only pay using the details on this page. NaijaNest will never ask for your password or OTP.</div>
+<main class="wrap page"><h1 style="font-size:2rem;margin-bottom:6px">Pay the booking fee</h1>
+<div class="panel"><p style="margin:0">Amount to pay NaijaNest</p><div class="price" id="a"></div><p class="hint">This books your inspection and releases the contact person. Rent is never paid here. Pay rent only after you have inspected, against a written agreement.</p>
+<p><b>Reference:</b> <span id="r"></span> (put it in your payment narration)</p><div id="how"></div></div>
+<p><a class="btn go" id="paid" href="#">I have paid, send proof on WhatsApp</a></p></main>
+<script>const r=q("ref")||"";$("a").textContent=N(CFG.VIEW_FEE);$("r").textContent=r;
+$("how").innerHTML=CFG.PAY_LINK?'<a class="btn" href="'+esc(CFG.PAY_LINK)+'" target="_blank" rel="noopener">Pay online (card or transfer)</a>':'<p><b>Bank transfer:</b> '+esc(CFG.BANK)+'</p>';
+$("paid").href=wa("Hi NaijaNest, I have paid the "+N(CFG.VIEW_FEE)+" booking fee for ref "+r+". Proof attached.")</script></body></html>
