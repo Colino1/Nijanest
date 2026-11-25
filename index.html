@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NaijaNest: rent direct from verified landlords</title>
+<meta name="description" content="Find verified rentals and deal directly with landlords. No agents, no agent fees. Testing phase, free to browse.">
+<meta name="theme-color" content="#0F5132">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Figtree:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="leaflet.css">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header><div class="wrap"><div><b>NaijaNest</b><span class="tag">Testing phase</span></div>
+<nav><a href="#listings">Listings</a><a href="#shield">Scam check</a><a href="deal.html">My deals</a><a href="list.html">List a property</a><a href="complain.html">Complain</a></nav></div></header>
+
+<main>
+<section class="hero"><div class="wrap grid two">
+<div>
+<h1>Rent direct from verified landlords.</h1>
+<p class="lead">No agents and no agent fees. We check the landlord, you inspect the property, and you deal with the owner directly.</p>
+<div class="row"><a class="btn go" href="#listings">Browse verified listings</a><a class="btn alt" href="#landlords">List your property</a><a class="btn alt" href="#shield">Check a listing for scams</a></div>
+</div>
+<div class="receipt" aria-live="polite">
+<label for="rent">Your yearly rent (₦)</label>
+<input id="rent" inputmode="numeric" value="1,500,000" autocomplete="off">
+<div class="rl"><span>Rent</span><span id="r0"></span></div>
+<div class="rl"><span>Agent fee (<span id="ap">10</span>%)</span><s id="r1"></s></div>
+<div class="rl"><span>Agreement and legal fee (<span id="lp">10</span>%)</span><s id="r2"></s></div>
+<div class="rl tot"><span>Extra fees on NaijaNest</span><span class="ok">₦0</span></div>
+<p class="hint" id="save"></p>
+<p class="hint">Typical street charges are about 10% each; they vary. <a href="#" id="edit">Change the percentages</a></p>
+</div>
+</div></section>
+
+<section id="listings"><div class="wrap">
+<h2>Find it on the map</h2>
+<p class="hint">Pins show the area. The exact address and the contact person are shared after we confirm your inspection.</p>
+<div class="filters">
+<select id="fs" aria-label="State"><option value="">All states</option></select>
+<select id="ft" aria-label="Property type"><option value="">All types</option><option>Room</option><option>Flat</option><option>House</option></select>
+<button class="btn alt sm" id="near" type="button">Sort by nearest to me</button><span class="hint" id="nearmsg" role="status"></span>
+</div>
+<p class="hint" id="mapnote" hidden>The map background could not load. Check your internet connection and refresh. Every card still has a Directions button.</p>
+<div class="split"><div id="map" role="region" aria-label="Map of listings"></div><div class="cards" id="cards"></div></div>
+<p style="margin-top:22px"><b>Can't find the place?</b> A Community Locator is a verified local who guides you to the address and leaves. The fee is ₦500 to ₦2,000 by distance and we confirm it before anyone goes.<br><a class="btn alt sm" id="loc" href="#" style="margin-top:10px">Request a Community Locator</a></p>
+</div></section>
+
+<section id="shield"><div class="wrap">
+<h2>Check a listing before you pay</h2>
+<p class="hint">Tick anything that has happened. It takes ten seconds and costs nothing.</p>
+<div id="qs" style="margin-top:14px"></div>
+<div class="verdict lo" id="vd" role="status" aria-live="polite"></div>
+<p class="hint">This spots warning signs. It cannot prove a listing is safe. Always inspect first and meet the owner.</p>
+</div></section>
+
+<section id="landlords"><div class="wrap"><h2>Landlords: list without an agent</h2><p>Upload your apartment with photos and a map pin. We verify you, then it goes live. Free to submit; the listing fee is paid only after we approve.</p><a class="btn go" href="list.html">List a property</a></div></section>
+
+<section><div class="wrap">
+<h2>What this testing version does</h2>
+<div class="grid two" style="align-items:start">
+<div><h3>Works today</h3><p>Browse verified listings. Request an inspection on WhatsApp. Landlords submit properties for verification.</p></div>
+<div><h3>Comes when funding allows</h3><p>Online escrow so rent is protected until you are satisfied, instant listings, automatic agreements and in-app inspection booking.</p></div>
+</div>
+<p><b>NaijaNest does not hold rent money in this version.</b> Never pay anyone before you have inspected the property, and never pay a contact person.</p>
+</div></section>
+
+<section><div class="wrap">
+<h2>Questions</h2>
+<details><summary>Is this the finished app?</summary><p>No. It is an early version built to learn from real tenants and landlords. What you tell us decides what we build first.</p></details>
+<details><summary>Why can't I see the owner's number?</summary><p>So nobody gets chased or scammed before an inspection. After we confirm your inspection, the contact person's details are shared.</p></details>
+<details><summary>Do I pay anything as a tenant?</summary><p>Browsing and requesting an inspection are free. When the landlord accepts, you pay a small booking fee to NaijaNest only, never to the landlord or contact person, and we then release the contact. There are no agent fees.</p></details>
+<details><summary>Someone asked me for money. What do I do?</summary><p>Do not pay. <a id="rep" href="#">Report it on WhatsApp</a> and we will suspend that listing while we investigate.</p></details>
+<p style="margin-top:22px"><a class="btn alt" id="fb" href="#">Send feedback on WhatsApp</a></p>
+</div></section>
+</main>
+
+<footer><div class="wrap">NaijaNest is in its testing phase. Listings marked "Example" are samples until real verified listings replace them. Questions? <a id="q" href="#">Message us on WhatsApp</a>.</div></footer>
+
+<script src="leaflet.js"></script>
+<script src="app.js"></script>
+<script>
+let ap=10,lp=10;
+function calc(){
+ const r=parseInt($("rent").value.replace(/\D/g,""))||0,a=r*ap/100,l=r*lp/100;
+ $("r0").textContent=N(r);$("r1").textContent=N(a);$("r2").textContent=N(l);
+ $("ap").textContent=ap;$("lp").textContent=lp;
+ $("save").textContent=r?"You keep "+N(a+l)+" compared with a street deal.":"";
+}
+$("rent").addEventListener("input",calc);
+$("edit").addEventListener("click",e=>{e.preventDefault();
+ const a=parseFloat(prompt("Agent fee, percent of rent:",ap)),l=parseFloat(prompt("Agreement and legal fee, percent of rent:",lp));
+ if(a>=0)ap=a;if(l>=0)lp=l;calc();});
+calc();
+STATES.forEach(s=>{$("fs").add(new Option(s,s));$("s").add(new Option(s,s));});
+const map=L.map("map",{scrollWheelZoom:false}).setView([9.08,8.67],6);
+const TILES="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",ATTR="© OpenStreetMap contributors © CARTO";
+const tl=L.tileLayer(TILES,{maxZoom:18,attribution:ATTR}).addTo(map);let warned=0;tl.on("tileerror",()=>{if(!warned++)$("mapnote").hidden=false});addEventListener("load",()=>map.invalidateSize());setTimeout(()=>map.invalidateSize(),400);
+const layer=L.layerGroup().addTo(map),pins={};let me=null;
+const km=(a,b)=>{const r=Math.PI/180,d=Math.sin((b.lat-a.lat)*r/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin((b.lng-a.lng)*r/2)**2;return 12742*Math.asin(Math.sqrt(d))};
+const dir=x=>"https://www.google.com/maps/dir/?api=1&destination="+x.lat+","+x.lng;
+function render(){
+ const s=$("fs").value,t=$("ft").value;
+ let list=LISTINGS.filter(x=>(!s||x.state===s)&&(!t||x.type===t));
+ if(me)list=list.map(x=>({...x,d:km(me,x)})).sort((a,b)=>a.d-b.d);
+ layer.clearLayers();
+ list.forEach(x=>{const m=L.marker([x.lat,x.lng]).addTo(layer).bindPopup("<b>"+esc(x.title)+"</b><br>"+N(x.rent)+" per year<br><a href='"+dir(x)+"' target='_blank' rel='noopener'>Get directions</a>");
+  m.on("click",()=>{const c=$("c-"+x.id);if(c){c.classList.add("hl");c.scrollIntoView({block:"nearest",behavior:"smooth"});setTimeout(()=>c.classList.remove("hl"),1800)}});pins[x.id]=m;});
+ if(me)L.circleMarker([me.lat,me.lng],{radius:8,color:"#0F5132",fillColor:"#00C853",fillOpacity:1}).addTo(layer).bindPopup("You are here");
+ const pts=list.map(x=>[x.lat,x.lng]);if(me)pts.push([me.lat,me.lng]);
+ if(pts.length)map.fitBounds(pts,{padding:[40,40],maxZoom:13});
+ $("cards").innerHTML=list.length?list.map(x=>`<article class="card" id="c-${x.id}"><div class="ph">${esc(x.area)}, ${esc(x.state)}</div><div class="b">
+ ${x.example?'<span class="ex">Example listing</span>':'<span class="v">Verified by NaijaNest</span>'}
+ <h3>${esc(x.title)}</h3><div class="price">${N(x.rent)} <small>per year</small></div>${x.d!=null?'<span class="dist">'+x.d.toFixed(1)+' km from you</span>':''}<div>${esc(x.note)}</div>
+ <div class="row"><button class="btn alt sm" type="button" data-pin="${x.id}">See on map</button><a class="btn alt sm" href="${dir(x)}" target="_blank" rel="noopener">Directions</a></div>
+ <a class="btn" href="${wa("Hi NaijaNest, I would like to inspect listing "+x.id+" ("+x.title+", "+x.area+"). My name: ")}">Request an inspection</a></div></article>`).join("")
+ :'<div class="empty">No listings match yet. <a href="#landlords">Landlords: be the first to list here.</a></div>';
+}
+$("cards").addEventListener("click",e=>{const m=pins[e.target.dataset.pin];if(m){map.setView(m.getLatLng(),15);m.openPopup();$("map").scrollIntoView({block:"center",behavior:"smooth"})}});
+$("near").addEventListener("click",()=>{const o=$("nearmsg");if(!navigator.geolocation){o.textContent="This browser can't share your location.";return}
+ o.textContent="Finding you…";navigator.geolocation.getCurrentPosition(p=>{me={lat:p.coords.latitude,lng:p.coords.longitude};o.textContent="Sorted nearest first.";render()},()=>{o.textContent="Location is off. Allow it for this site, then tap again."},{timeout:10000})});
+$("fs").addEventListener("change",render);$("ft").addEventListener("change",render);render();
+$("loc").href=wa("Hi NaijaNest, I need a Community Locator to guide me to a property. Listing: \nMy area: ");
+const QS=[["I was asked to pay before I inspected the property",3],["I was asked for an agent fee, inspection fee or form fee",3],["They want payment into a personal account, or by airtime, gift card or crypto",3],["The rent is far below similar places nearby",2],["I'm being rushed because others are ready to pay",2],["Whoever showed me the place can't say who owns it",2],["There is no written tenancy agreement, or they refuse to write terms down",2],["The owner is abroad and can't meet me",2]];
+$("qs").innerHTML=QS.map((q,i)=>`<label class="q"><input type="checkbox" data-i="${i}"><span>${esc(q[0])}</span></label>`).join("");
+function verdict(){const on=[...document.querySelectorAll("#qs input:checked")].map(c=>QS[c.dataset.i]),sc=on.reduce((a,q)=>a+q[1],0),v=$("vd");
+ v.className="verdict "+(sc>=5?"hi":sc>=2?"mid":"lo");
+ v.innerHTML=(sc>=5?"<b>High risk. Do not pay anything.</b> Several of these are classic scam signs. Stop and report it so we can check the listing."
+ :sc>=2?"<b>Be careful.</b> Meet the owner and verify them before you pay. You can ask us to check this listing."
+ :"<b>No warning signs ticked.</b> That does not prove it is safe. Inspect first, meet the owner, and pay only against a written agreement.")
+ +(on.length?'<p><a class="btn sm go" href="'+wa("Hi NaijaNest, please check this listing for me. Warning signs: "+on.map(q=>q[0]).join("; ")+". Listing link or phone number: ")+'">Ask NaijaNest to check it</a></p>':"")}
+$("qs").addEventListener("change",verdict);verdict();
+$("fb").href=wa("Hi, here is my feedback on NaijaNest: ");
+$("q").href=wa("Hi, I have a question about NaijaNest.");
+$("rep").href=wa("Hi NaijaNest, I want to report someone asking for money. Listing or person: ");
+</script>
+</body>
+</html>
